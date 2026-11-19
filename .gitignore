@@ -30,8 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: credenciales reales (Neon, Nubefact, GitHub, Cloudinary, Resend...). Nunca se suben.
 .env*
+# Plantilla con los nombres de las variables, sin valores
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +41,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Prisma: el cliente se genera en npm install (postinstall) y en npm run build
+/app/generated/prisma
+
+# Neon CLI (proyecto/rama local)
+.neon
+
+# Herramientas de IA y editores: configuración local y skills instaladas (se reinstalan desde skills-lock.json)
+.claude/settings.local.json
+.claude/skills/
+.agents/
+.windsurf/
+.impeccable/
+
+# Editores y sistema
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+*.log
+

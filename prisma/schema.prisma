@@ -1,0 +1,152 @@
+// Esquema de Prisma ORM 7 para el sistema de inventarios
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+// En Prisma 7 la URL de conexión vive en prisma.config.ts (CLI) y en el adapter (runtime)
+datasource db {
+  provider = "postgresql"
+}
+
+// SUPER_USUARIO: el primer administrador (admin@admin.com). USUARIO: toda cuenta nueva,
+// se cree a mano o inicie sesión con otro método (GitHub, etc.)
+enum Rol {
+  SUPER_USUARIO
+  USUARIO
+}
+
+// Tipo de documento del cliente (Nubefact: 1 = DNI, 6 = RUC)
+enum TipoDocumento {
+  DNI
+  RUC
+}
+
+// Tipo de comprobante electrónico (Nubefact: 2 = boleta, 1 = factura)
+enum TipoComprobante {
+  BOLETA
+  FACTURA
+}
+
+// Estado del comprobante en SUNAT (vía Nubefact)
+// PENDIENTE: Nubefact aún no lo confirmó (error de red / timeout) → se puede reintentar
+// ENVIADO:   Nubefact lo registró; SUNAT todavía no responde
+// ACEPTADO:  SUNAT lo aceptó
+// RECHAZADO: SUNAT lo rechazó (motivo en sunatError)
+enum EstadoSunat {
+  PENDIENTE
+  ENVIADO
+  ACEPTADO
+  RECHAZADO
+}
+
+// Cuentas del panel. passwordHash (bcrypt) es opcional: las cuentas que entran con GitHub u otro método no tienen contraseña
+model Usuario {
+  id            String   @id @default(cuid())
+  nombre        String
+  email         String   @unique
+  passwordHash  String?
+  // Id numérico de la cuenta de GitHub (las cuentas que entran con GitHub se identifican por este id, no por el correo)
+  githubId      String?  @unique @db.VarChar(30)
+  rol           Rol      @default(USUARIO)
+  activo        Boolean  @default(true)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Persona (DNI) o empresa (RUC). Reglas en CHECK de la migración:
+// DNI = 8 dígitos + nombre y apellido; RUC = 11 dígitos + razón social
+model Cliente {
+  id              String        @id @default(cuid())
+  tipoDocumento   TipoDocumento @default(DNI)
+  numeroDocumento String        @unique @db.VarChar(11)
+  razonSocial     String?       @db.VarChar(200)
+  nombre          String?       @db.VarChar(100)
+  apellido        String?       @db.VarChar(100)
+  direccion       String        @db.VarChar(255)
+  telefono        String?       @db.VarChar(20)
+  email           String?       @unique @db.VarChar(150)
+  creadoEn        DateTime      @default(now())
+  actualizadoEn   DateTime      @updatedAt
+
+  comprobantes Comprobante[]
+
+  @@index([apellido, nombre])
+  @@map("customers")
+}
+
+model Producto {
+  id            String   @id @default(cuid())
+  codigo        String   @unique @db.VarChar(30)
+  nombre        String
+  descripcion   String?
+  precioConIgv  Decimal  @db.Decimal(12, 2)
+  stock         Int      @default(0)
+  stockMinimo   Int      @default(0)
+  activo        Boolean  @default(true)
+  // Imagen en Cloudinary: URL https de entrega y public_id (para transformarla o borrarla)
+  imagenUrl     String?  @db.VarChar(500)
+  imagenId      String?  @db.VarChar(255)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  detalles DetalleComprobante[]
+
+  @@index([nombre])
+  @@map("products")
+}
+
+// Boleta o factura electrónica (serie + correlativo únicos, p. ej. BBB1-6)
+model Comprobante {
+  id          String          @id @default(cuid())
+  tipo        TipoComprobante
+  serie       String          @db.VarChar(4)
+  correlativo Int
+  fecha       DateTime        @default(now())
+  clienteId   String?
+  subtotal    Decimal         @db.Decimal(12, 2) // sin IGV (total gravada)
+  igv         Decimal         @db.Decimal(12, 2)
+  total       Decimal         @db.Decimal(12, 2) // con IGV
+  creadoEn    DateTime        @default(now())
+
+  // Respuesta de Nubefact / SUNAT
+  estadoSunat      EstadoSunat @default(PENDIENTE)
+  enlace           String?     @db.VarChar(500)
+  enlacePdf        String?     @db.VarChar(500)
+  enlaceXml        String?     @db.VarChar(500)
+  enlaceCdr        String?     @db.VarChar(500)
+  sunatDescripcion String?     @db.VarChar(1000)
+  sunatError       String?     @db.VarChar(1000)
+  codigoHash       String?     @db.VarChar(100)
+  cadenaQr         String?     @db.VarChar(1000)
+  enviadoEn        DateTime?
+
+  cliente  Cliente?             @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  detalles DetalleComprobante[]
+
+  @@unique([serie, correlativo])
+  @@index([fecha])
+  @@index([clienteId])
+  @@index([estadoSunat])
+  @@map("invoices")
+}
+
+model DetalleComprobante {
+  id             String  @id @default(cuid())
+  comprobanteId  String
+  productoId     String
+  cantidad       Int
+  precioUnitario Decimal @db.Decimal(12, 2) // con IGV
+  total          Decimal @db.Decimal(12, 2)
+
+  comprobante Comprobante @relation(fields: [comprobanteId], references: [id], onDelete: Cascade)
+  producto    Producto    @relation(fields: [productoId], references: [id], onDelete: Restrict)
+
+  @@index([comprobanteId])
+  @@index([productoId])
+  @@map("invoice_items")
+}

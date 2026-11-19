@@ -1,22 +1,42 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* --background y --foreground los define HeroUI según su tema. No redefinirlos aquí:
+   la plantilla de create-next-app los pasaba a colores claros en modo oscuro y dejaba
+   texto claro sobre las superficies blancas de HeroUI (p. ej. las celdas de la tabla) */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Tokens del panel admin: salen del logo (bolsa naranja con contorno de tinta).
+   Prefijo admin- para no pisar las variables de HeroUI (--surface, --muted...) */
+:root {
+  --admin-ink: #1f1d18;
+  --admin-canvas: #f4f5f1;
+  --admin-paper: #ffffff;
+  --admin-subtle: #5d5a52;
+  --admin-line: #d9d7ce;
+  --admin-bag: #f5a13a;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --admin-ink: #f1efe8;
+    --admin-canvas: #1b1a16;
+    --admin-paper: #24231e;
+    --admin-subtle: #b4b0a5;
+    --admin-line: #3a3832;
   }
+}
+
+@theme inline {
+  --color-ink: var(--admin-ink);
+  --color-canvas: var(--admin-canvas);
+  --color-paper: var(--admin-paper);
+  --color-subtle: var(--admin-subtle);
+  --color-line: var(--admin-line);
+  --color-bag: var(--admin-bag);
 }
 
 body {

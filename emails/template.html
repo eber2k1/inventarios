@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light only">
+  <title>Bienvenido a Tiendita Enter</title>
+  <!--
+    Correo de bienvenida para usuarios nuevos. Lo envía lib/correo.ts con Resend.
+    Variables (se reemplazan y se escapan al enviar):
+      {{nombre}}    nombre del usuario
+      {{email}}     correo con el que se registró
+      {{metodo}}    "correo y contraseña" o "GitHub"
+      {{urlLogin}}  enlace al inicio de sesión de la app
+      {{anio}}      año actual
+    Estilos en línea y maquetación con tablas: así se ve igual en Gmail, Outlook y Apple Mail.
+  -->
+  <style>
+    @media (max-width: 620px) {
+      .contenedor { width: 100% !important; }
+      .relleno { padding-left: 24px !important; padding-right: 24px !important; }
+      .titulo { font-size: 24px !important; line-height: 30px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f5f1; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+  <!-- Texto de vista previa (se ve en la bandeja de entrada, no en el correo) -->
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f4f5f1;">
+    Hola {{nombre}}, tu cuenta en Tiendita Enter ya está lista.&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f5f1;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <table role="presentation" class="contenedor" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px;">
+
+          <!-- Marca -->
+          <tr>
+            <td style="padding:0 4px 20px 4px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="width:36px; height:36px; background-color:#f5a13a; border:2px solid #1f1d18; border-radius:10px; text-align:center; vertical-align:middle; font-family:Arial, Helvetica, sans-serif; font-size:18px; font-weight:bold; color:#1f1d18;">T</td>
+                  <td style="padding-left:10px; font-family:Arial, Helvetica, sans-serif; font-size:18px; font-weight:bold; color:#1f1d18; letter-spacing:-0.2px;">Tiendita Enter</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Tarjeta -->
+          <tr>
+            <td style="background-color:#ffffff; border:2px solid #1f1d18; border-radius:16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                <!-- Franja de color -->
+                <tr>
+                  <td style="height:8px; background-color:#f5a13a; border-radius:14px 14px 0 0; font-size:0; line-height:0;">&nbsp;</td>
+                </tr>
+
+                <tr>
+                  <td class="relleno" style="padding:36px 40px 8px 40px; font-family:Arial, Helvetica, sans-serif; color:#1f1d18;">
+                    <p style="margin:0 0 8px 0; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; color:#5d5a52;">Cuenta creada</p>
+                    <h1 class="titulo" style="margin:0 0 16px 0; font-size:28px; line-height:34px; font-weight:bold; color:#1f1d18;">¡Bienvenido, {{nombre}}!</h1>
+                    <p style="margin:0 0 16px 0; font-size:16px; line-height:24px; color:#1f1d18;">
+                      Tu cuenta en el panel de <strong>Tiendita Enter</strong> ya está lista. Desde ahí podrás gestionar los productos de la tienda: registrar nuevos, actualizar precios y stock, y subir sus imágenes.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Datos de la cuenta -->
+                <tr>
+                  <td class="relleno" style="padding:8px 40px 8px 40px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f5f1; border:1px solid #d9d7ce; border-radius:12px;">
+                      <tr>
+                        <td style="padding:16px 20px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:22px; color:#5d5a52;">
+                          <span style="display:block;">Correo de la cuenta</span>
+                          <strong style="display:block; font-size:16px; color:#1f1d18; word-break:break-all;">{{email}}</strong>
+                          <span style="display:block; margin-top:10px;">Inicias sesión con</span>
+                          <strong style="display:block; font-size:16px; color:#1f1d18;">{{metodo}}</strong>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Botón -->
+                <tr>
+                  <td class="relleno" align="left" style="padding:24px 40px 8px 40px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background-color:#f5a13a; border:2px solid #1f1d18; border-radius:10px; box-shadow:3px 3px 0 0 #1f1d18;">
+                          <a href="{{urlLogin}}" target="_blank" style="display:inline-block; padding:14px 28px; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:bold; color:#1f1d18; text-decoration:none;">Ir al panel</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="relleno" style="padding:16px 40px 36px 40px; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#5d5a52;">
+                    Si el botón no funciona, copia este enlace en tu navegador:<br>
+                    <a href="{{urlLogin}}" target="_blank" style="color:#1f1d18; text-decoration:underline; word-break:break-all;">{{urlLogin}}</a>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Pie -->
+          <tr>
+            <td style="padding:20px 8px 0 8px; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#5d5a52; text-align:center;">
+              Recibiste este correo porque se creó una cuenta con esta dirección en Tiendita Enter.<br>
+              Si no fuiste tú, puedes ignorar este mensaje.<br>
+              © {{anio}} Tiendita Enter
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
